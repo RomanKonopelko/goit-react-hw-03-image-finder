@@ -1,9 +1,12 @@
 import { Component } from 'react';
-import Searchbar from './Components/Searchbar';
 import imageRequest from './Servises/imageAjax';
+import Loader from 'react-loader-spinner';
+import Searchbar from './Components/Searchbar';
 import ImageGallery from './Components/ImageGallery';
-import './image.css';
 import Button from './Components/Button';
+
+import 'react-loader-spinner/dist/loader/css/react-spinner-loader.css';
+import './image.css';
 
 class App extends Component {
   state = {
@@ -15,8 +18,6 @@ class App extends Component {
 
   componentDidUpdate(prevProp, prevState) {
     if (prevState.searchQuery !== this.state.searchQuery) {
-      console.log('update');
-      console.log(this.state.searchQuery);
       this.fetchImages();
     }
   }
@@ -29,7 +30,6 @@ class App extends Component {
       error: null,
       isLoading: false,
     });
-    console.log(this.state.searchQuery);
   };
 
   fetchImages = () => {
@@ -44,6 +44,10 @@ class App extends Component {
           images: [...prevState.images, ...images],
           currentPage: prevState.currentPage + 1,
         }));
+        window.scrollTo({
+          top: document.documentElement.scrollHeight,
+          behavior: 'smooth',
+        });
       })
       .catch(error => this.setState({ error }))
       .finally(() => this.setState({ isLoading: false }));
@@ -54,7 +58,20 @@ class App extends Component {
       <>
         <Searchbar onSubmit={this.getQuery} />
         <ImageGallery images={this.state.images} onClick={this.toggleModal} />
-        {this.state.images.length > 0 && <Button onClick={this.fetchImages} />}
+        {this.state.isLoading && (
+          <div className="loader">
+            <Loader
+              type="Puff"
+              color="#00BFFF"
+              height={100}
+              width={100}
+              timeout={3000} //3 secs
+            />
+          </div>
+        )}
+        {this.state.images.length > 0 && !this.state.isLoading && (
+          <Button onClick={this.fetchImages} />
+        )}
       </>
     );
   }

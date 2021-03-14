@@ -1,5 +1,6 @@
 import ImageGalleryItem from './ImageGalleryItem'
 import { Component } from 'react'
+import PropTypes from 'prop-types'
 import Modal from './Modal'
 
 export default class ImageGallery extends Component {
@@ -13,7 +14,6 @@ export default class ImageGallery extends Component {
         this.setState(({ showModal }) => ({
             showModal: !showModal,
         }));
-        console.log(this.state.showModal);
     };
 
     getModalImg = (src, alt) => {
@@ -24,14 +24,22 @@ export default class ImageGallery extends Component {
 
     render() {
         const { images } = this.props
-        console.log(images);
         return <>
             <ul className="ImageGallery">
                 {images.map(({ id, webformatURL, tags, largeImageURL }) => {
-                    return <ImageGalleryItem key={id} src={webformatURL} alt={tags} data={largeImageURL} onClick={this.toggleModal} getModalImg={this.getModalImg} />
+                    return <ImageGalleryItem key={`${id + tags}`} id={id} src={webformatURL} alt={tags} data={largeImageURL} onClick={this.toggleModal} getModalImg={this.getModalImg} />
                 })}
             </ul>
             {this.state.showModal && <Modal src={this.state.src} alt={this.state.alt} onClose={this.toggleModal} />}
         </>
     }
+}
+
+ImageGallery.propTypes = {
+    images: PropTypes.arrayOf(PropTypes.shape({
+        id: PropTypes.number.isRequired,
+        webformatURL: PropTypes.string.isRequired,
+        tags: PropTypes.string.isRequired,
+        largeImageURL: PropTypes.string.isRequired,
+    }))
 }
