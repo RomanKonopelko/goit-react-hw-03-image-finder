@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import imageRequest from './Servises/imageAjax';
+import imageRequest from './Servises/imageAxios';
 import Loader from 'react-loader-spinner';
 import Searchbar from './Components/Searchbar';
 import ImageGallery from './Components/ImageGallery';
